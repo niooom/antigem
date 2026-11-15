@@ -108,7 +108,13 @@ class AntiGemDocumentsProvider : DocumentsProvider() {
             val ctx = context
             if (ctx != null) {
                 val launchIntent = Intent(ctx, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    action = Intent.ACTION_MAIN
+                    addCategory(Intent.CATEGORY_LAUNCHER)
+                    addFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    )
                 }
                 val pendingIntent = PendingIntent.getActivity(
                     ctx,
