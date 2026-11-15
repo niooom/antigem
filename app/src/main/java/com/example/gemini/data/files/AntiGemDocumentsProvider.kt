@@ -78,11 +78,11 @@ class AntiGemDocumentsProvider : DocumentsProvider() {
         val ctx = context ?: return MatrixCursor(projection ?: DEFAULT_ROOT_PROJECTION)
         val result = MatrixCursor(projection ?: DEFAULT_ROOT_PROJECTION)
         val base = baseDir()
-        val title = ctx.applicationInfo.loadLabel(ctx.packageManager).toString().ifBlank { "AntiGem" }
+        val title = ctx.applicationInfo.loadLabel(ctx.packageManager).toString().ifBlank { "Agent Gravity" }
 
         result.newRow().apply {
             add(Root.COLUMN_ROOT_ID, ROOT_ID)
-            add(Root.COLUMN_SUMMARY, "Open AntiGem")
+            add(Root.COLUMN_SUMMARY, "Open Agent Gravity")
             add(Root.COLUMN_FLAGS, Root.FLAG_LOCAL_ONLY or Root.FLAG_SUPPORTS_IS_CHILD)
             add(Root.COLUMN_TITLE, title)
             add(Root.COLUMN_DOCUMENT_ID, ROOT_ID)
@@ -123,7 +123,7 @@ class AntiGemDocumentsProvider : DocumentsProvider() {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
                 throw AuthenticationRequiredException(
-                    SecurityException("Open AntiGem"),
+                    SecurityException("Open Agent Gravity"),
                     pendingIntent
                 )
             }
@@ -165,7 +165,7 @@ class AntiGemDocumentsProvider : DocumentsProvider() {
     private fun includeFile(result: MatrixCursor, docId: String, file: File) {
         result.newRow().apply {
             add(Document.COLUMN_DOCUMENT_ID, docId)
-            add(Document.COLUMN_DISPLAY_NAME, if (docId == ROOT_ID) "AntiGem" else file.name)
+            add(Document.COLUMN_DISPLAY_NAME, if (docId == ROOT_ID) "Agent Gravity" else file.name)
             add(Document.COLUMN_SIZE, if (file.isDirectory) 0L else file.length())
             add(Document.COLUMN_MIME_TYPE, mimeTypeForFile(file))
             add(Document.COLUMN_LAST_MODIFIED, file.lastModified())

@@ -10,9 +10,10 @@ on:
       variant:
         description: 'Release APK variant to build'
         required: true
-        default: 'termuxRelease'
+        default: 'standardRelease'
         type: choice
         options:
+          - standardRelease
           - termuxRelease
           - allRelease
 
@@ -63,19 +64,23 @@ jobs:
               -alias antigem \
               -storepass 123456 \
               -keypass 123456 \
-              -dname "CN=AntiGem, OU=Mobile, O=AntiGem, L=Local, ST=Local, C=US"
+              -dname "CN=Agent Gravity, OU=Mobile, O=Agent Gravity, L=Local, ST=Local, C=US"
           fi
 
       - name: Build Release APK(s)
         run: |
           chmod +x gradlew scripts/build_all_apks.sh
-          VARIANT="${{ inputs.variant || 'termuxRelease' }}"
+          VARIANT="${{ inputs.variant || 'standardRelease' }}"
           if [ "$VARIANT" = "allRelease" ]; then
             ./scripts/build_all_apks.sh --release
-          else
+          elif [ "$VARIANT" = "termuxRelease" ]; then
             ./gradlew :app:assembleTermuxRelease --no-daemon
             mkdir -p output
             find app/build/outputs/apk/termux/release -name "*.apk" -exec cp {} output/ \;
+          else
+            ./gradlew :app:assembleStandardRelease --no-daemon
+            mkdir -p output
+            find app/build/outputs/apk/standard/release -name "*.apk" -exec cp {} output/ \;
           fi
 
       - name: List Built Release APKs
@@ -84,7 +89,7 @@ jobs:
       - name: Upload Release APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: antigem-android-release-apk
+          name: agent-gravity-release-apk
           path: output/*.apk
           if-no-files-found: error
           retention-days: 30
