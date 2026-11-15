@@ -30,7 +30,7 @@ android {
     namespace = "com.example.gemini"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.gravitynioo.agent"
+        applicationId = "com.gravitynioo.ide"
         minSdk = 24
         targetSdk = 28
         versionCode = appVersionCode
@@ -56,7 +56,7 @@ android {
         // (com.antigem: +2, so its bridge port never equals com.termux's hub port).
         create("standard") {
             dimension = "mode"
-            applicationId = "com.gravitynioo.agent"
+            applicationId = "com.gravitynioo.ide"
             buildConfigField("int", "BRIDGE_PORT", "1236")
             buildConfigField("int", "HUB_PORT", "1237")
             buildConfigField("int", "BROWSER_MCP_PORT", "8767")

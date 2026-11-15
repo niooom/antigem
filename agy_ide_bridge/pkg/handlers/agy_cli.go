@@ -25,7 +25,20 @@ import (
 // A running hub keeps the agy it started with until the server restarts; the app restarts the server after an update
 // that installed a newer agy (the log's "Updated agy <old> -> <new>." line).
 
-const agyInstallCommand = "curl -fsSL https://antigravity.google/cli/install.sh | bash"
+const agyInstallCommand = `set -eo pipefail
+if ! command -v curl >/dev/null 2>&1; then
+  if command -v apt-get >/dev/null 2>&1; then
+    echo "Installing curl and ca-certificates..."
+    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y curl ca-certificates
+  elif command -v pkg >/dev/null 2>&1; then
+    echo "Installing curl..."
+    pkg install -y curl
+  else
+    echo "Error: curl is required to install agy." >&2
+    exit 1
+  fi
+fi
+curl -fsSL https://antigravity.google/cli/install.sh | bash`
 
 type agyCliJob struct {
 	mu       sync.Mutex
