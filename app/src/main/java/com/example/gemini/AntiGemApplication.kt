@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.pm.PackageManager
 import android.content.pm.Signature
 import android.os.Build
-import android.widget.Toast
 import com.example.gemini.data.adb.AdbConnectManager
 import com.example.gemini.data.updater.PluginUpdateCheckWorker
 import com.example.gemini.data.updater.UpdateCheckWorker
@@ -55,11 +54,6 @@ class AntiGemApplication : Application(), coil.ImageLoaderFactory {
         com.example.gemini.data.agent.agy.AgyCloud.init(this)
         // Forks build with their own key, so only official release APKs report real usage.
         if (!BuildConfig.DEBUG && !isOfficialRelease()) {
-            Toast.makeText(
-                this,
-                "Unofficial build: analytics disabled. Developer: set your own TelemetryDeck app ID and RELEASE_CERT_SHA256 in AntiGemApplication.kt.",
-                Toast.LENGTH_LONG
-            ).show()
             return
         }
         TelemetryDeck.start(

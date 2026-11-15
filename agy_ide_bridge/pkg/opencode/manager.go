@@ -118,6 +118,9 @@ func (m *Manager) termuxPrefix() string {
 	if runtime.GOOS != "android" {
 		return ""
 	}
+	if _, err := os.Stat("/etc/os-release"); err == nil {
+		return ""
+	}
 	if p := os.Getenv("PREFIX"); p != "" {
 		return p
 	}
