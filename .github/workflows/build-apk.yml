@@ -1,0 +1,72 @@
+name: Build Android APK
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'APK variant to build'
+        required: true
+        default: 'termuxDebug'
+        type: choice
+        options:
+          - termuxDebug
+          - allDebug
+
+permissions:
+  contents: read
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'agy_ide_bridge/go.mod'
+
+      - name: Ensure xz-utils is installed
+        run: |
+          if ! command -v xz >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y xz-utils
+          fi
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build Debug APK(s)
+        run: |
+          chmod +x gradlew scripts/build_all_apks.sh
+          VARIANT="${{ inputs.variant || 'termuxDebug' }}"
+          if [ "$VARIANT" = "allDebug" ]; then
+            ./scripts/build_all_apks.sh
+          else
+            ./gradlew :app:assembleTermuxDebug --no-daemon
+            mkdir -p output
+            find app/build/outputs/apk/termux/debug -name "*.apk" -exec cp {} output/ \;
+          fi
+
+      - name: List Built APKs
+        run: ls -lh output/
+
+      - name: Upload APK Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: antigem-android-apk
+          path: output/*.apk
+          if-no-files-found: error
+          retention-days: 30
